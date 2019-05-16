@@ -13,7 +13,9 @@ module.exports.query = (sql, callback) => {
     connection.connect()
     // 执行 sql 语句
     connection.query(sql, (err, result) => {
-        if (err) throw new Error
+        if (err) {
+            return console.log(err.message)
+        }
         // 执行成回调函数
         callback(result)
     })

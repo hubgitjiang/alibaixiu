@@ -11,7 +11,8 @@
       </div> -->
         <div class="row">
           <div class="col-md-4">
-            <form>
+            <!-- 新增区域  begin -->
+            <form id="form">
               <h2>添加新用户</h2>
               <div class="form-group">
                 <label for="email">邮箱</label>
@@ -28,13 +29,15 @@
               </div>
               <div class="form-group">
                 <label for="password">密码</label>
-                <input id="password" class="form-control" name="password" type="text" placeholder="密码">
+                <input id="password" class="form-control" name="password" type="password" placeholder="密码">
               </div>
               <div class="form-group">
                 <button class="btn btn-primary" type="submit">添加</button>
               </div>
             </form>
+            <!-- 新增区域  end -->
           </div>
+          <!-- 列表区域 begin -->
           <div class="col-md-8">
             <div class="page-action">
               <!-- show when multiple checked -->
@@ -52,26 +55,131 @@
                   <th class="text-center" width="100">操作</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="tbody">
                 <% for(var i = 0; i < result.length; i ++) { %>
                   <tr>
                     <td class="text-center"><input type="checkbox"></td>
-                    <td class="text-center"><img class="avatar" src="<%= result[i].avatar %>"></td>
-                    <td><%= result[i].email %></td>
-                    <td><%= result[i].slug %></td>
-                    <td><%= result[i].nickname %></td>
+                    <td class="text-center"><img class="avatar" src="<%= result[i].avatar?result[i].avatar:'/assets/img/default.png' %>"></td>
+                    <td>
+                      <%= result[i].email %>
+                    </td>
+                    <td>
+                      <%= result[i].slug %>
+                    </td>
+                    <td>
+                      <%= result[i].nickname %>
+                    </td>
                     <td>激活</td>
                     <td class="text-center">
                       <a href="post-add.php" class="btn btn-default btn-xs">编辑</a>
-                      <a href="javascript:;" class="btn btn-danger btn-xs">删除</a>
+                      <a href="javascript:;" id="<%= result[i].id %>" class="btn btn-danger btn-xs">删除</a>
                     </td>
                   </tr>
-                <% } %>
+                  <% } %>
               </tbody>
             </table>
           </div>
+          <!-- 列表区域 end -->
         </div>
       </div>
   </div>
   <% include layout/aside %>
     <% include layout/footer %>
+      <!-- 渲染列表数据的模板 -->
+      <script id="tmp" type="text/html">
+        {{ each data }}
+        <tr>
+          <td class="text-center"><input type="checkbox"></td>
+          <td class="text-center"><img class="avatar" src="{{$value.avatar?$value.avatar: '/assets/img/default.png'}}"></td>
+          <td>
+            {{$value.email}}
+          </td>
+          <td>
+            {{$value.slug}}
+          </td>
+          <td>
+            {{$value.nickname}}
+          </td>
+          <td>激活</td>
+          <td class="text-center">
+            <a href="post-add.php" class="btn btn-default btn-xs">编辑</a>
+            <a href="javascript:;" id="{{$value.id}}" class="btn btn-danger btn-xs">删除</a>
+          </td>
+        </tr>
+        {{ /each }}
+      </script>
+      <script>
+        // 给新增的提交按钮注册点击事件：(通过事件委托给提交按钮绑定点击事件)
+        $('#form').on('click', 'button[type="submit"]', function (event) {
+          // 阻止默认行为
+          event.preventDefault()
+          // // 获取提交所需的参数：
+          // var email = $('#email').val()
+          // var slug = $('#slug').val()
+          // var nickname = $('#nickname').val()
+          // var password = $('#password').val()
+          // // 接收字符串
+          // var params = `email=${email}&slug=${slug}&nickname=${nickname}&password=${password}`
+          // console.log(params)
+          // 2.0 使用 serialize 方法来接收参数
+          var params = $('#form').serialize()
+          // 3.0 提交数据
+          $.ajax({
+            url: '/addUser',
+            method: 'POST',
+            data: params,
+            dataType: 'JSON',
+            success: res => {
+              // 逻辑处理：
+              let { status, msg } = res
+              if (status === 200) {
+                alert(msg)
+                // 重新渲染数据
+                getAllUsers()
+              } else {
+                alert(msg)
+              }
+            }
+          })
+        })
+        // 封装一个用来渲染用户列表的数据
+        function getAllUsers() {
+          $.ajax({
+            url: '/getAllUsers',
+            method: 'GET',
+            dataType: 'JSON',
+            success: res => {
+              // 解构 res 对象
+              let { status } = res
+              if (status === 200) {
+                // 重新渲染页面
+                let trHtml = template('tmp', res)
+                $('#tbody').html(trHtml)
+              } else {
+                alert('出错啦')
+              }
+            }
+          })
+        }
+        // 给删除按钮绑定点击事件：
+        $('#tbody').on('click', '.btn-danger', function (event) {
+          if (confirm('您确定要删除吗')) {
+            // 得到 id
+            var id = $(this).attr('id')
+            $.ajax({
+              url: '/delUser?id=' + id,
+              method: 'GET',
+              success: function (res) {
+                let { status, msg } = res
+                if (status === 200) {
+                  alert(msg)
+                  // 更新数据
+                  getAllUsers()
+                } else {
+                  alert('出错啦')
+                }
+              }
+            })
+          }
+        })
+      </script>

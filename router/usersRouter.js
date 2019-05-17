@@ -20,7 +20,17 @@ router.get('/getAllUsers', (req, res) => {
 
 // 添加一个删除数据的路由
 router.get('/delUser', (req, res) => {
-    (req, res)
+    userContr.delUser(req, res)
+})
+
+// 添加一个根据id得到用户的路由
+router.get('/getUserById', (req, res) => {
+    userContr.getUserById(req, res)
+})
+
+// 添加一个修改用户的路由
+router.post('/updateUser', (req, res) => {
+    userContr.updateUser(req, res)
 })
 
 // 暴露接口

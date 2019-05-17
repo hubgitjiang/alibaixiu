@@ -80,5 +80,20 @@ module.exports = {
                 msg: '修改成功'
             })
         })
+    },
+    // 批量删除
+    delUsersByIds: (req, res) => {
+        // 获取 参数 id
+        let ids = req.body.id // {id: [1,2,3]}
+        // 将数组转为字符串，用逗号隔开
+        var idStr = ids.join(',')
+        // 执行 sql 语句：
+        let delSql = `DELETE FROM users WHERE id in (${idStr})`
+        userdb.query(delSql, result => {
+            res.send({
+                status: 200,
+                msg: '删除成功'
+            })
+        })
     }
 }

@@ -15,7 +15,7 @@ module.exports = {
                 })
             }
             res.send({
-                status: 200, 
+                status: 200,
                 msg: '数据获取成功',
                 data: result
             })
@@ -38,5 +38,42 @@ module.exports = {
         //         data: result
         //     })
         // })
+    },
+    // 新增一个分类
+    addCate: (req, res) => {
+        // 1.0 接收参数
+        let params = req.body
+        // 2.0 提交数据的到 mysql
+        categorydb.addData(params, (err, result) => {
+            if (err) {
+                return res.send({
+                    status: 400,
+                    msg: '新增失败'
+                })
+            }
+            res.send({
+                status: 200,
+                msg: '新增成功'
+            })
+        })
+    },
+    // 批量删除
+    delAllCateByIds: (req, res) => {
+        // 1.0 获取要删除的参数
+        let ids = req.body.id // [1,2,3]
+        ids = ids.join(',')
+        // 2.0 调用方法
+        categorydb.delCateByIds(ids, (err, result) => {
+            if (err) {
+                return res.send({
+                    status: 400,
+                    msg: '删除失败'
+                })
+            }
+            res.send({
+                status: 200,
+                msg: '删除成功'
+            })
+        })
     }
 }

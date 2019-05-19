@@ -15,9 +15,30 @@ module.exports = {
             // } 
             // callback(null, result)
         })
+    },
+    // 根据接收到的数据插入一条数据到 mysql
+    // obj: 包括将来要插入到数据库中的别名和name
+    addData: function(obj, callback) {
+        // 接收 sql 语句
+        let insertSql = `INSERT INTO categories (slug, name) VALUES ('${obj.slug}', '${obj.name}')`
+        // 执行 
+        db.query(insertSql, (err, result) => {
+            callback(err, result)
+        })
+    },
+    // 批量删除
+    //  1.0 批量删除的 id 的字符串
+    //  2.0 回调函数
+    delCateByIds: function(ids, callback) {
+        // 接收 sql 语句
+        let sql = `DELETE FROM categories WHERE id in (${ids})`
+        console.log(sql)
+        // 执行 sql 代码
+        db.query(sql, (err, result) => {
+            callback(err, result)
+        })
     }
 }
-
 
 // --------------------------------没有封装 db.js 之前的代码---------------------------------
 // // 执行 分类 表的 db 文件

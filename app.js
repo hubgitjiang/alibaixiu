@@ -4,6 +4,7 @@
 // 3.0 处理静态文件
 // 4.0 处理路由文件
 const express = require('express')
+const cookieSession = require('cookie-session')
 const ejs = require('ejs')
 const bodyParser = require('body-parser')
 
@@ -21,14 +22,20 @@ app.set('view engine', 'ejs') // 设置渲染模板使用的引擎
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
+// 配置 session
+app.use(cookieSession({
+    name: 'session',
+    keys: ['key1', 'key2']
+}))
+
 // 配置静态文件
 app.use('/assets', express.static('./assets'))
 app.use('/static/uploads', express.static('./uploads'))
 
 // 注册路由中间件
+app.use(loginRouter)    // 与 登录 相关的路由
 app.use(usersRouter) // 与 用户 相关的路由
 app.use(categoryRouter) // 与 分类 相关的路由
-app.use(loginRouter)    // 与 登录 相关的路由
 
 app.listen(3000, () => {
     console.log('服务器已经开启：localhost:3000/')

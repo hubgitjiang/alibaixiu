@@ -3,6 +3,15 @@ const express = require('express')
 const userContr = require('../controller/usersContr.js')
 const router = express.Router()
 
+// router.use((req, res, next) => {
+//     // 验证是否登录
+//     if (req.session.user) {
+//         next()
+//     } else {
+//         res.send('<script>alert("您还没有登录");window.location="/login"</script>')
+//     }
+// })
+
 router.get('/users', userContr.getUsers)    // 得到静态页面
     .post('/addUser', userContr.addUser)  // 添加用户的路由
     .get('/getAllUsers', userContr.getAllUsers) // 添加获取所有用户信息的路由

@@ -187,6 +187,8 @@
                 alert(msg)
                 // 重新渲染数据
                 getAllUsers()
+              } else if (status === 304) {
+                window.location = '/login'
               } else {
                 alert(msg)
               }
@@ -206,6 +208,8 @@
                 // 重新渲染页面
                 let trHtml = template('tmp', res)
                 $('#tbody').html(trHtml)
+              } else if (status === 304) {
+                window.location = '/login'
               } else {
                 alert('出错啦')
               }
@@ -226,6 +230,8 @@
                   alert(msg)
                   // 更新数据
                   getAllUsers()
+                } else if (status === 304) {
+                  window.location = '/login'
                 } else {
                   alert('出错啦')
                 }
@@ -257,6 +263,8 @@
                 // 将添加新用户区域改为修改用户
                 let html = template('editUser', data)
                 $('#form').html(html)
+              } else if (status === 304) {
+                window.location = '/login'
               }
             }
           })
@@ -282,6 +290,8 @@
                 // 重新渲染新增用户区域
                 let html = template('addUser', {})
                 $('#form').html(html)
+              } else if (status === 304) {
+                window.location = '/login'
               } else {
                 alert('出错啦')
               }
@@ -332,6 +342,8 @@
                 alert(msg)
                 // 重新学好
                 getAllUsers()
+              } else if (status === 304) {
+                window.location = '/login'
               } else {
                 alert('出错啦')
               }

@@ -34,6 +34,11 @@ module.exports = {
                 })
             }
             // 登录成功
+            // 要将用户的登录信息保存起来
+            req.session.user = {
+                email: params.email,
+                password: params.password
+            }
             res.send({
                 status: 200,
                 msg: '登录成功'

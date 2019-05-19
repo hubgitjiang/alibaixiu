@@ -33,10 +33,11 @@
   $('#login').click(function (event) {
     // 阻止默认行为：
     event.preventDefault()
-    if ($('#email').val().trim() == '') {
+    // 判断邮箱是否输入内容
+    if ($('#email').val().trim() === '') {
       return alert('请输入邮箱')
     }
-    if ($('#password').val().trim() == '') {
+    if ($('#password').val() === '') {
       return alert('请输入密码')
     }
     // 1.0 接收参数
@@ -51,6 +52,7 @@
         if (status === 200) {
           alert(msg)
           // 跳转到首页
+          window.location = '/users'
         } else {
           alert(msg)
         }

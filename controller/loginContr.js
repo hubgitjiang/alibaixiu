@@ -48,5 +48,15 @@ module.exports = {
                 msg: '登录成功'
             })
         })
+    },
+    // 退出登录的方法
+    logout: (req, res) => {
+        // 服务器：清除 session
+        req.session.user = null
+        // 响应成功的信息给浏览器
+        res.send({
+            status: 200,
+            msg: '退出成功'
+        })
     }
 }

@@ -2,7 +2,9 @@ const categorydb = require('../model/categorydb.js')
 module.exports = {
     // 直接返回 categories 页面
     categories: (req, res) => {
-        res.render('categories', {})
+        // 传入一个 nickname
+        let nickname = req.session.user.nickname
+        res.render('categories', { nickname })
     },
     // 得到所有的分类数据
     getAllData: (req, res) => {

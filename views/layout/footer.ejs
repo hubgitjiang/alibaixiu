@@ -9,12 +9,17 @@
     $('#logout').click(function(event){
         // 阻止默认行为
         event.preventDefault()
+        console.log('我是 foot 中的 js')
         // 发送退出请求：去服务器清除 session
         $.ajax({
             url: '/logout',
             method: 'GET',
             success: function(res) {
-                console.log(res)
+                if (res.status === 200) {
+                    alert(res.msg)
+                    // 退出成功后要跳转到 login
+                    window.location = '/login'
+                }
             }
         })
     })

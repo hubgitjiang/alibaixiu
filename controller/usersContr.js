@@ -21,7 +21,7 @@ module.exports = {
     },
     // 添加用户数据
     addUser: (req, res) => {
-        if(isXhrLogin(req, res)) {
+        if (isXhrLogin(req, res)) {
             return
         }
 
@@ -46,7 +46,7 @@ module.exports = {
     },
     // 动态获取所有用户信息
     getAllUsers: (req, res) => {
-        if(isXhrLogin(req, res)) {
+        if (isXhrLogin(req, res)) {
             return
         }
         // 1.0 去数据库中得到所有数据
@@ -68,7 +68,7 @@ module.exports = {
     },
     // 根据用户 id 删除用户
     delUser: (req, res) => {
-        if(isXhrLogin(req, res)) {
+        if (isXhrLogin(req, res)) {
             return
         }
         // 接收 id
@@ -90,7 +90,7 @@ module.exports = {
     },
     // 根据用户 id 得到用户对象
     getUserById: (req, res) => {
-        if(isXhrLogin(req, res)) {
+        if (isXhrLogin(req, res)) {
             return
         }
         // 1.0 接收id
@@ -114,7 +114,7 @@ module.exports = {
     },
     // 修改用户
     updateUser: (req, res) => {
-        if(isXhrLogin(req, res)) {
+        if (isXhrLogin(req, res)) {
             return
         }
         // 接收参数
@@ -136,7 +136,7 @@ module.exports = {
     },
     // 批量删除
     delUsersByIds: (req, res) => {
-        if(isXhrLogin(req, res)) {
+        if (isXhrLogin(req, res)) {
             return
         }
         // 获取 参数 id
@@ -157,6 +157,19 @@ module.exports = {
                 msg: '删除成功'
             })
         })
+    },
+    // 响应个人中心
+    profile: (req, res) => {
+        // 得到当前登录用户的 id
+        let id = req.session.user.id
+        // 根据 id 去数据中获取数据
+        userdb.getUserById(id, (err, result) => {
+            if (err) {
+                // 跳转回 users 页面 (404)
+                return res.send(`<script>alert('出错啦');window.location='/users'</script>`)
+            }
+            res.render('profile', result[0])
+        })
     }
 }
 
@@ -168,7 +181,7 @@ function isXhrLogin(req, res) {
             msg: '还没有登录'
         })
         return true
-    } 
+    }
     return false
 }
 function isBroLogin(req, res) {

@@ -1,6 +1,15 @@
 const db = require('./db.js')
 module.exports = {
-    query: db.query
+    query: db.query,
+    // 添加一个方法：根据 id 得到 user
+    getUserById: (id, callback) => {
+        // 接收 sql 语句
+        let selSql = `SElECT * FROM users WHERE id = ${id}`
+        // 执行 sql
+        db.query(selSql, (err, result) => {
+            callback(err, result)
+        })
+    }
 }
 
 // -------------------------封装 db.js 之前的代码----------------------------

@@ -19,6 +19,7 @@ router.get('/users', userContr.getUsers)    // 得到静态页面
     .get('/getUserById', userContr.getUserById)   // 添加一个根据id得到用户的路由
     .post('/updateUser', userContr.updateUser)  // 添加一个修改用户的路由
     .post('/delUsersByIds', userContr.delUsersByIds)  // 添加一个批量删除的路由
+    .get('/profile', userContr.profile) // 添加一个响应个人中心的路由
 
 // 暴露接口
 module.exports = router

@@ -4,7 +4,8 @@ module.exports = {
     categories: (req, res) => {
         // 传入一个 nickname
         let nickname = req.session.user.nickname
-        res.render('categories', { nickname })
+        let avatar = req.session.user.avatar
+        res.render('categories', { nickname, avatar })
     },
     // 得到所有的分类数据
     getAllData: (req, res) => {

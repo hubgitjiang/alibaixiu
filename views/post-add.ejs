@@ -1,0 +1,124 @@
+<% include layout/header %>
+
+  <div class="main">
+    <% include layout/nav %>
+      <div class="container-fluid">
+        <div class="page-title">
+          <h1>写文章</h1>
+        </div>
+        <!-- 有错误信息时展示 -->
+        <!-- <div class="alert alert-danger">
+        <strong>错误！</strong>发生XXX错误
+      </div> -->
+        <form class="row">
+          <div class="col-md-9">
+            <div class="form-group">
+              <label for="title">标题</label>
+              <input id="title" class="form-control input-lg" name="title" type="text" placeholder="文章标题">
+            </div>
+            <div class="form-group">
+              <label for="content">内容</label>
+              <textarea id="content" class="form-control input-lg" name="content" cols="30" rows="10" placeholder="内容"></textarea>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="slug">别名</label>
+              <input id="slug" class="form-control" name="slug" type="text" placeholder="slug">
+              <p class="help-block">https://zce.me/post/<strong>slug</strong></p>
+            </div>
+            <div class="form-group">
+              <label for="feature">特色图像</label>
+              <!-- show when image chose -->
+              <img id="featureimg" class="help-block thumbnail" style="display: none">
+              <input id="feature" class="form-control" name="feature" type="file">
+            </div>
+            <div class="form-group">
+              <label for="category">所属分类</label>
+              <select id="category" class="form-control" name="category">
+              
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="created">发布时间</label>
+              <input id="created" class="form-control" name="created" type="datetime-local">
+            </div>
+            <div class="form-group">
+              <label for="status">状态</label>
+              <select id="status" class="form-control" name="status">
+                <option value="drafted">草稿</option>
+                <option value="published">已发布</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <button id="postsave" class="btn btn-primary" type="submit">保存</button>
+            </div>
+          </div>
+        </form>
+      </div>
+  </div>
+  <% include layout/aside %>
+    <% include layout/footer %>
+      <script id="tmp" type="text/html">
+        {{each data}}
+        <option value="{{ $value.id }}">{{ $value.name }}</option>
+        {{/each}}
+      </script>
+      <script>
+        // 当页面打开动态渲染文章的分类数据
+        function getSelect() {
+          $.ajax({
+            url: '/getAllData',
+            method: 'GET',
+            success: res => {
+              // 将数据渲染到下拉框中使用模块引擎
+              var html = template('tmp', res)
+              // 添加到所属分类
+              $('#category').append(html)
+            }
+          })
+        }
+        getSelect()
+        // 给上传框绑定一个 change 事件
+        $('#feature').change(() => {
+          // 得到选择的图片
+          var imgobj = $('#feature')[0].files[0]
+          // 创建一个虚拟路径
+          var imgUrl = URL.createObjectURL(imgobj)
+          // 设置给 img 
+          $('#featureimg').show().attr('src', imgUrl)
+        })
+
+        // 给保存动态添加点击事件
+        $('#postsave').click((event) => {
+          // 阻止默认行为
+          event.preventDefault()
+          // 拼接数据 使用 formData 来拼接
+          var fd = new FormData()
+          // 添加参数
+          fd.append('title', $('#title').val())
+          fd.append('content', $('#content').val())
+          fd.append('slug', $('#slug').val())
+          fd.append('feature', $('#feature')[0].files[0])
+          fd.append('category', $('#category').val())
+          fd.append('created', $('#created').val())
+          fd.append('status', $('#status').val())
+          // 提交
+          $.ajax({
+            url: '/postsave',
+            method: 'POST',
+            data: fd,
+            processData: false,
+            contentType: false,
+            success: res => {
+              if (res.status === 200) {
+                alert(res.msg)
+                // 跳转到所有文章中
+                window.location = '/posts'
+              } else {
+                alert(res.msg)
+              }
+            }
+          })
+        })
+      </script>

@@ -40,6 +40,7 @@ module.exports = {
                 password: params.password,
                 // 保存一个用户的昵称
                 nickname: result[0].nickname,
+                avatar: result[0].avatar,
                 id: result[0].id
             }
             console.log(req.session.user)

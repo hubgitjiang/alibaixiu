@@ -9,6 +9,16 @@ module.exports = {
         db.query(selSql, (err, result) => {
             callback(err, result)
         })
+    },
+    // 更新个人信息
+    // 修改 别名 昵称 图片 说明
+    updateMsgById: (obj, callback) => {
+        // 拼接 sql 语句
+        let updateSql = `UPDATE users SET slug = '${obj.slug}', nickname = '${obj.nickname}', avatar = '${obj.img}', bio = '${obj.bio}' WHERE id = ${obj.id}`
+        // 执行 sql 语句
+        db.query(updateSql, (err, result) => {
+            callback(err, result)
+        })
     }
 }
 

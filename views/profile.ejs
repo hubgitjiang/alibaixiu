@@ -2,61 +2,109 @@
 
   <div class="main">
     <% include layout/nav %>
-    <div class="container-fluid">
-      <div class="page-title">
-        <h1>我的个人资料</h1>
-      </div>
-      <!-- 有错误信息时展示 -->
-      <!-- <div class="alert alert-danger">
+      <div class="container-fluid">
+        <div class="page-title">
+          <h1>我的个人资料</h1>
+        </div>
+        <!-- 有错误信息时展示 -->
+        <!-- <div class="alert alert-danger">
         <strong>错误！</strong>发生XXX错误
       </div> -->
-      <form class="form-horizontal">
-        <div class="form-group">
-          <label class="col-sm-3 control-label">头像</label>
-          <div class="col-sm-6">
-            <label class="form-image">
+        <form class="form-horizontal">
+          <input type="hidden" id="id" value="<%= id %>">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">头像</label>
+            <div class="col-sm-6">
+              <label class="form-image">
               <input id="avatar" type="file">
-              <img src="<%= avatar%>">
+              <img id="avatarImg" src="<%= avatar%>">
               <i class="mask fa fa-upload"></i>
             </label>
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label for="email" class="col-sm-3 control-label">邮箱</label>
-          <div class="col-sm-6">
-            <input id="email" class="form-control" name="email" type="type" value="<%= email%>" placeholder="邮箱" readonly>
-            <p class="help-block">登录邮箱不允许修改</p>
+          <div class="form-group">
+            <label for="email" class="col-sm-3 control-label">邮箱</label>
+            <div class="col-sm-6">
+              <input id="email" class="form-control" name="email" type="type" value="<%= email%>" placeholder="邮箱" readonly>
+              <p class="help-block">登录邮箱不允许修改</p>
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label for="slug" class="col-sm-3 control-label">别名</label>
-          <div class="col-sm-6">
-            <input id="slug" class="form-control" name="slug" type="type" value="<%= slug%>" placeholder="slug">
-            <p class="help-block">https://zce.me/author/<strong>zce</strong></p>
+          <div class="form-group">
+            <label for="slug" class="col-sm-3 control-label">别名</label>
+            <div class="col-sm-6">
+              <input id="slug" class="form-control" name="slug" type="type" value="<%= slug%>" placeholder="slug">
+              <p class="help-block">https://zce.me/author/<strong>zce</strong></p>
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label for="nickname" class="col-sm-3 control-label">昵称</label>
-          <div class="col-sm-6">
-            <input id="nickname" class="form-control" name="nickname" type="type" value="<%= nickname%>" placeholder="昵称">
-            <p class="help-block">限制在 2-16 个字符</p>
+          <div class="form-group">
+            <label for="nickname" class="col-sm-3 control-label">昵称</label>
+            <div class="col-sm-6">
+              <input id="nickname" class="form-control" name="nickname" type="type" value="<%= nickname%>" placeholder="昵称">
+              <p class="help-block">限制在 2-16 个字符</p>
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label for="bio" class="col-sm-3 control-label">简介</label>
-          <div class="col-sm-6">
-            <textarea id="bio" class="form-control" placeholder="Bio" cols="30" rows="6"><%= bio%></textarea>
+          <div class="form-group">
+            <label for="bio" class="col-sm-3 control-label">简介</label>
+            <div class="col-sm-6">
+              <textarea id="bio" class="form-control" placeholder="Bio" cols="30" rows="6"><%= bio%></textarea>
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <div class="col-sm-offset-3 col-sm-6">
-            <button type="submit" class="btn btn-primary">更新</button>
-            <a class="btn btn-link" href="password-reset.html">修改密码</a>
+          <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-6">
+              <button type="submit" id="update" class="btn btn-primary">更新</button>
+              <a class="btn btn-link" href="password-reset.html">修改密码</a>
+            </div>
           </div>
-        </div>
-      </form>
-    </div>
+        </form>
+      </div>
   </div>
 
-<% include layout/aside %>
-<% include layout/footer %>
+  <% include layout/aside %>
+    <% include layout/footer %>
+      <script>
+        // 给上传框绑定事件
+        $('#avatar').change(function () {
+          // 1.0 要得到选中的图片
+          var imgObj = $('#avatar')[0].files[0]
+          // 生成一个内存地址
+          var imgUrl = URL.createObjectURL(imgObj)
+          // 2.0 将选中的图片显示到 avatarImg 中
+          $('#avatarImg').attr('src', imgUrl)
+        })
+        // 给更新按钮绑定点击事件
+        $('#update').click(function (event) {
+          // 阻止默认行为
+          event.preventDefault()
+          // 通过异步方式提交上传的数据
+          var fd = new FormData()
+          // 添加参数
+          // 判断是否选择图片：
+          if ($('#avatar')[0].files[0]) {
+            fd.append('img', $('#avatar')[0].files[0]) // 图片
+          } else {
+            fd.append('img', $('#avatarImg').attr('src'))
+          }
+          fd.append('id', $('#id').val())
+          fd.append('email', $('#email').val())
+          fd.append('slug', $('#slug').val())
+          fd.append('nickname', $('#nickname').val())
+          fd.append('bio', $('#bio').val())
+          // 发送请求
+          $.ajax({
+            url: '/updateProfile',
+            method: 'POST',
+            data: fd,
+            processData: false, // 不要处理请求参数
+            contentType: false, // 不要设置请求头
+            success: res => {
+              if (res.status === 200) {
+                alert(res.msg)
+                // 跳转回 user
+                window.location = '/users'
+              } else {
+                alert(res.msg)
+              }
+            }
+          })
+        })
+      </script>

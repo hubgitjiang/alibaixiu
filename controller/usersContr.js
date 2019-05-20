@@ -1,5 +1,7 @@
 // 引入 userdb
+const path = require('path')
 const userdb = require('../model/userdb.js')
+const formidable = require('formidable')
 
 // 处理所有与 用户 相关的逻辑
 module.exports = {
@@ -16,7 +18,8 @@ module.exports = {
             // 渲染页面, 渲染数据
             // 还要将昵称也渲染到页面上
             let nickname = req.session.user.nickname
-            res.render('users', { result: result, nickname: nickname })
+            let avatar = req.session.user.avatar
+            res.render('users', { result: result, nickname, avatar })
         })
     },
     // 添加用户数据
@@ -169,6 +172,49 @@ module.exports = {
                 return res.send(`<script>alert('出错啦');window.location='/users'</script>`)
             }
             res.render('profile', result[0])
+        })
+    },
+    // 修改个人信息
+    updateProfile: (req, res) => {
+        // 1.0 接收参数
+        let form = new formidable.IncomingForm()
+        // 修改图片上传后保存的路径\
+        let imgpath = path.join(__dirname, '../uploads')
+        form.uploadDir = imgpath
+        // console.log(imgpath)
+        // 保留图片后缀
+        form.keepExtensions = true
+        form.parse(req, (err, fields, files) => {
+            if (err) {
+                return res.send({
+                    status: 400,
+                    msg: '出错啦'
+                })
+            }
+            // 修改 别名 昵称 图片 说明
+            // 创建一个对象 obj， 包含以下属性  别名 昵称 图片 说明 id
+            // 只需要在 fields 添加一张图片信息
+            // 判断图片是否存在 
+            if (files.img) {
+                let name = path.basename(files.img.path)
+                fields.img = '/static/uploads/' + name
+            }
+            // 当修改了个人中的图片和昵称后需要将 session 中的信息进行更新
+            req.session.user.nickname = fields.nickname
+            req.session.user.avatar = fields.img
+            // 2.0 将参数更新到数据库
+            userdb.updateMsgById(fields, (err1, result) => {
+                if (err1) {
+                    return res.send({
+                        status: 400,
+                        msg: '出错啦'
+                    })
+                }
+                res.send({
+                    status: 200,
+                    msg: '更新数据成功'
+                })
+            })
         })
     }
 }

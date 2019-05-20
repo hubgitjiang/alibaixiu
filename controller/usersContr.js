@@ -14,7 +14,9 @@ module.exports = {
                 return res.send('<script>alert("' + err.message + '")</script>')
             }
             // 渲染页面, 渲染数据
-            res.render('users', { result: result })
+            // 还要将昵称也渲染到页面上
+            let nickname = req.session.user.nickname
+            res.render('users', { result: result, nickname: nickname })
         })
     },
     // 添加用户数据

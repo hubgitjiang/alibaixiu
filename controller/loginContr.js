@@ -25,7 +25,7 @@ module.exports = {
                     status: 401,
                     msg: '邮箱或者密码不正确'
                 })
-            } 
+            }
             if (result[0].password != params.password) {
                 // 登录不成功
                 return res.send({
@@ -37,8 +37,12 @@ module.exports = {
             // 要将用户的登录信息保存起来
             req.session.user = {
                 email: params.email,
-                password: params.password
+                password: params.password,
+                // 保存一个用户的昵称
+                nickname: result[0].nickname,
+                id: result[0].id
             }
+            console.log(req.session.user)
             res.send({
                 status: 200,
                 msg: '登录成功'

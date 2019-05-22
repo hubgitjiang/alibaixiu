@@ -61,18 +61,22 @@ module.exports = {
     posts: (req, res) => {
         let nickname = req.session.user.nickname
         let avatar = req.session.user.avatar
-        res.render('posts', {nickname, avatar})
+        res.render('posts', { nickname, avatar })
     },
     // 得到文章数据
     getPostData: (req, res) => {
-        // 调用操作数据库的方法
-        wenzhangdb.getPostsData((err, result) => {
+        // 接收当前页 和 pagesize
+        let page = req.query.page
+        let pagesize = req.query.pagesize
+        // 调用操作数据库的方法：
+        //   将当前页 和 页容量传入到操作 数据库的 方法中
+        wenzhangdb.getPostsData(page, pagesize, (err, result) => {
             if (err) {
                 return res.send({
                     status: 400,
                     msg: 'err'
                 })
-            } 
+            }
             res.send({
                 status: 200,
                 msg: '成功',

@@ -53,12 +53,12 @@
     <% include layout/footer %>
       <script src="/assets/vendors/twbs-pagination/jquery.twbsPagination.js"></script>
       <script id="tmp" type="text/html">
-        {{ each data }}
+        {{ each data[0] }}
         <tr>
           <td class="text-center"><input type="checkbox"></td>
           <td>{{ $value.title }}</td>
-          <td>{{ $value.user_id}}</td>
-          <td>{{ $value.category_id }}</td>
+          <td>{{ $value.nickname}}</td>
+          <td>{{ $value.name }}</td>
           <td class="text-center"> {{ $value.created }} </td>
           <td class="text-center">{{ $value.status === 'published' ? '已发布' : '草稿' }}</td>
           <td class="text-center">
@@ -69,28 +69,39 @@
         {{ /each }}
       </script>
       <script>
-        // 用来获取文章数据
-        function getPostData() {
+        // 每页显示的条数
+        var pagesize = 10
+
+        // 用来获取文章分页数据
+        //  page: 设置当前页
+        //  pagesize: 设置每页显示的数量
+        function getPostData(page, pagesize) {
           $.ajax({
-            url: '/getPostData',
+            // 将 page 和 pagesize 提交到服务器
+            url: `/getPostData?page=${page}&pagesize=${pagesize}`,
             success: res => {
+              console.log(res.data)
               let { status, msg } = res
               if (status === 200) {
                 let html = template('tmp', res)
                 $('#tbody').html(html)
+                // 得到总条数
+                let total = res.data[1][0]['count(*)']
+                // 会初始化分页插件
+                initPage(total, pagesize)
               } else {
                 alert(msg)
               }
             }
           })
         }
-        getPostData()
+        getPostData(1, pagesize)
 
         // 初始化分页插件的方法
-        function initPage() {
+        function initPage(total, pagesize) {
           $('#pagination').twbsPagination({
-            totalPages: 10, // 总页数
-            visiblePages: 5, // 可见页数
+            totalPages: Math.ceil(total / pagesize), // 总页数
+            visiblePages: 10, // 可见页数
             // startPage: 1, // 初始化页数
             hideOnlyOnePage: true, // 只有一页时隐藏
             first: '首页', // 第一页显示的文本
@@ -99,8 +110,10 @@
             next: '下一页', // 下一页
             onPageClick: function (event, page) { // 点击分页元素时触发事件
               // page 就是当前页数
+              console.log(page)
+              getPostData(page, pagesize)
             }
           });
         }
-        initPage()
+        // initPage()
       </script>

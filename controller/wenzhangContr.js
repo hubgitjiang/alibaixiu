@@ -13,6 +13,9 @@ module.exports = {
     postsave: (req, res) => {
         // 接收参数
         let form = new formidable.IncomingForm()
+        // 将图片保存到 upload 中
+        form.uploadDir = path.join(__dirname, '../uploads')
+        form.keepExtensions = true
         form.parse(req, (err, fields, files) => {
             if (err) {
                 return res.send({
@@ -51,6 +54,29 @@ module.exports = {
                     status: 200,
                     msg: '新增成功'
                 })
+            })
+        })
+    },
+    // 得到所有文章页面
+    posts: (req, res) => {
+        let nickname = req.session.user.nickname
+        let avatar = req.session.user.avatar
+        res.render('posts', {nickname, avatar})
+    },
+    // 得到文章数据
+    getPostData: (req, res) => {
+        // 调用操作数据库的方法
+        wenzhangdb.getPostsData((err, result) => {
+            if (err) {
+                return res.send({
+                    status: 400,
+                    msg: 'err'
+                })
+            } 
+            res.send({
+                status: 200,
+                msg: '成功',
+                data: result
             })
         })
     }

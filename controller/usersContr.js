@@ -216,6 +216,46 @@ module.exports = {
                 })
             })
         })
+    },
+    // 得到修改密码在页面
+    password_reset: (req, res) => {
+        // 将修改密码页面响应回浏览器
+        // 从 session 获取登录用户名 和 头像
+        let nickname = req.session.user.nickname
+        let avatar = req.session.user.avatar
+        res.render('password-reset', { nickname, avatar })
+    },
+    // 修改密码
+    updatepwd: (req, res) => {
+        // 接收参数：
+        // 1.0 验证旧密码是否正确
+        let id = req.session.user.id
+        userdb.getPwdById(id, (err, result) => {
+            // 验证密码是否正确
+            if (req.body.old === result[0].password) {
+                // 2.0 将新密码存入到数据库
+                userdb.updateUsersPwd(id, req.body.password, (err, result) => {
+                    if (err) {
+                        return res.send({
+                            status: 400,
+                            msg: '出错啦'
+                        })
+                    } else {
+                        // 清除 session
+                        req.session.user = null
+                        res.send({
+                            status: 200,
+                            msg: '密码更新成功'
+                        }) 
+                    }
+                })
+            } else {
+                res.send({
+                    status: 300,
+                    msg: '旧密码验证失败'
+                })
+            }
+        })
     }
 }
 

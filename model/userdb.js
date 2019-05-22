@@ -19,6 +19,21 @@ module.exports = {
         db.query(updateSql, (err, result) => {
             callback(err, result)
         })
+    },
+    // 根据 id 得到密码
+    getPwdById: (id, callback) => {
+        // 接收 sql
+        let sql = `SELECT password FROM users WHERE id = ${id}`
+        db.query(sql, (err, result) => {
+            callback(err, result)
+        })
+    },
+    // 将密码更新到数据库
+    updateUsersPwd: (id, newpwd, callback) => {
+        let sql = `UPDATE users SET password = '${newpwd}' WHERE id = ${id}`
+        db.query(sql, (err, result) => {
+            callback(err, result)
+        })
     }
 }
 

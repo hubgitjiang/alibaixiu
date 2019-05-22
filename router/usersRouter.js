@@ -21,6 +21,8 @@ router.get('/users', userContr.getUsers)    // 得到静态页面
     .post('/delUsersByIds', userContr.delUsersByIds)  // 添加一个批量删除的路由
     .get('/profile', userContr.profile) // 添加一个响应个人中心的路由
     .post('/updateProfile', userContr.updateProfile) // 添加一个修改个人信息的路由
+    .get('/password-reset', userContr.password_reset) // 添加一个得到修改密码页面的路由
+    .post('/updatepwd', userContr.updatepwd) // 添加一个处理修改密码的路由
 
 // 暴露接口
 module.exports = router

@@ -12,6 +12,7 @@ const usersRouter = require('./router/usersRouter.js')
 const categoryRouter = require('./router/categoryRouter.js')
 const loginRouter = require('./router/loginRouter.js')
 const wenzhangRouter = require('./router/wenzhangRouter.js')
+const setRouter = require('./router/setRouter.js')
 
 const app = express()
 
@@ -32,12 +33,14 @@ app.use(cookieSession({
 // 配置静态文件
 app.use('/assets', express.static('./assets'))
 app.use('/static/uploads', express.static('./uploads'))
+app.use('/public', express.static('./public'))
 
 // 注册路由中间件
 app.use(loginRouter)    // 与 登录 相关的路由
 app.use(usersRouter) // 与 用户 相关的路由
 app.use(categoryRouter) // 与 分类 相关的路由
 app.use(wenzhangRouter) // 与 文章 相关的路由
+app.use(setRouter) // 与 设置 相关的路由
 
 app.listen(3000, () => {
     console.log('服务器已经开启：localhost:3000/')

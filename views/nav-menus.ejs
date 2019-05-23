@@ -1,0 +1,118 @@
+<% include layout/header %>
+
+  <div class="main">
+    <% include layout/nav %>
+      <div class="container-fluid">
+        <div class="page-title">
+          <h1>导航菜单</h1>
+        </div>
+        <!-- 有错误信息时展示 -->
+        <!-- <div class="alert alert-danger">
+        <strong>错误！</strong>发生XXX错误
+      </div> -->
+        <div class="row">
+          <div class="col-md-4">
+            <form id="form">
+              <h2>添加新导航链接</h2>
+              <div class="form-group">
+                <label for="text">文本</label>
+                <input id="text" class="form-control" name="text" type="text" placeholder="文本">
+              </div>
+              <div class="form-group">
+                <label for="title">标题</label>
+                <input id="title" class="form-control" name="title" type="text" placeholder="标题">
+              </div>
+              <div class="form-group">
+                <label for="href">链接</label>
+                <input id="href" class="form-control" name="href" type="text" placeholder="链接">
+              </div>
+              <div class="form-group">
+                <button class="btn btn-primary" id="add" type="submit">添加</button>
+              </div>
+            </form>
+          </div>
+          <div class="col-md-8">
+            <div class="page-action">
+              <!-- show when multiple checked -->
+              <a class="btn btn-danger btn-sm" href="javascript:;" style="display: none">批量删除</a>
+            </div>
+            <table class="table table-striped table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th class="text-center" width="40"><input type="checkbox"></th>
+                  <th>文本</th>
+                  <th>标题</th>
+                  <th>链接</th>
+                  <th class="text-center" width="100">操作</th>
+                </tr>
+              </thead>
+              <tbody id="tbody">
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <% include layout/aside %>
+    <% include layout/footer %>
+      <script id="tmp" type="text/html">
+        {{ each arr }}
+        <tr>
+          <td class="text-center"><input type="checkbox"></td>
+          <td><i class="{{ $value.icon }}"></i>{{ $value.text }}</td>
+          <td>{{ $value.title }}</td>
+          <td>#</td>
+          <td class="text-center">
+            <a href="javascript:;" class="btn btn-danger btn-xs">删除</a>
+          </td>
+        </tr>
+        {{ /each }}
+      </script>
+      <script>
+        // 动态获取列表数据
+        function getListData() {
+          $.ajax({
+            url: '/getMenuList',
+            type: 'GET',
+            success: res => {
+              if (res.status === 200) {
+                // 接收数据源：是字符串
+                let arrStr = res.data[0].value
+                // 转为对象
+                let arr = JSON.parse(arrStr)
+                // 渲染数据
+                let html = template('tmp', { arr })
+                $('#tbody').html(html)
+              } else {
+                alert(res.msg)
+              }
+            }
+          })
+        }
+        getListData()
+        // 给新增按钮绑定点击事件
+        $('#add').click(event => {
+          // 阻止默认行为 
+          event.preventDefault()
+          // 获取数据
+          let params = $('#form').serialize()
+          // 提交数据
+          $.ajax({
+            url: '/addMenus',
+            data: params,
+            method: 'POST',
+            success: res => {
+              // 解构
+              let { status, msg } = res
+              if ( status === 200) {
+                alert(msg)
+                getListData()
+              } else {
+                alert(msg)
+              }
+            }
+          })
+        })
+      </script>
